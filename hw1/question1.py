@@ -1,13 +1,42 @@
 """
   Computer Vision HW 1 - Question 1
 """
+import math
+
 import numpy as np
 from PIL import Image
 from matplotlib import pyplot as plt
 
 
-# Given two matrices of equal size
-# find the intersection of the two.
+def zeros(rows, cols):
+    """
+    Create a matrix of zeros
+    :param rows:
+    :param cols:
+    :return:
+    """
+    return [[0 for _ in range(cols)] for _ in range(rows)]
+
+
+def subset_of(m, n):
+    """
+    Checks if bitwise matrix M is a
+    subset of N. That is, all 1's in M
+    should be contained by N
+    :param m: smaller set
+    :param n: larger set
+    :return: true if M is subset of N
+    false if sizes are not equal
+    """
+    if len(m) != len(n) or len(m[0]) != len(n[0]):
+        return False
+    out = zeros(len(m), len(m[0]))
+    for i in range(len(m)):
+        for j in range(len(m[0])):
+            out[i][j] = m[i][j] * n[i][j]
+    return True
+
+
 def intersect(m, n):
     """
     Bitwise and operation (M AND N)
@@ -17,14 +46,27 @@ def intersect(m, n):
     :return: M AND N, if the size of M is equal to N
         1x1 zero matrix if the length is different
     """
-    # return a 1x1 zero matrix for different length
     if len(m) != len(n) or len(m[0]) != len(n[0]):
         return [[0]]
-    out = [[0 for _ in range(len(m[0]))] for _ in range(len(m))]
+    out = zeros(len(m), len(m[0]))
     for i in range(len(m)):
         for j in range(len(m[0])):
             out[i][j] = m[i][j] * n[i][j]
     return out
+
+
+def pad_len(str_el):
+    """
+    Get the pad lengths for computing morphological
+    operations using a structuring element str_el
+    :param str_el:
+    :return: Tuple (a, a), (b, b):
+        Where padding sizes are ((left, right), (top, bottom))
+    and b is for the top and bottom.
+    """
+    a = math.ceil(len(str_el) / 2)
+    b = math.ceil(len(str_el[0]) / 2)
+    return (a, a), (b, b)
 
 
 def dilation(a, b):
@@ -37,26 +79,17 @@ def dilation(a, b):
     """
     rows = len(a)
     cols = len(a[0])
-    out = [[0 for _ in range(cols)] for _ in range(rows)]
+    out = zeros(rows, cols)
+    padded_a = np.pad(a, pad_len(b), mode='constant', constant_values=(0, 0))
     for i in range(rows):
         for j in range(cols):
-            slice_of_a = [[0 for _ in range(len(b[0]))] for _ in range(len(b))]
-
-            intersection = intersect(b, slice_of_a)
+            slice_of_padded_a = padded_a[i:i + len(b), j:j + len(b[0])]
+            intersection = intersect(b, slice_of_padded_a)
             sum_intersection = np.sum(intersection)
             contains = sum_intersection > 0
             if contains:
                 out[i][j] = 1
     return out
-    flat_submatrices = np.array([
-        a[i:(i + dilation_level), j:(j + dilation_level)]
-        for i in range(pimg_shape[0] - h_reduce) for j in range(pimg_shape[1] - w_reduce)
-    ])
-
-    # replace the values either 255 or 0 by dilation condition
-    image_dilate = np.array([255 if (i == structuring_kernel).any() else 0 for i in flat_submatrices])
-    # obtain new matrix whose shape is equal to the original image size
-    image_dilate = image_dilate.reshape(orig_shape)
 
 
 def erosion(a, b):
@@ -69,11 +102,12 @@ def erosion(a, b):
     """
     rows = len(a)
     cols = len(a[0])
-    out = [[0 for _ in range(cols)] for _ in range(rows)]
+    out = zeros(rows, cols)
+    padded_a = np.pad(a, pad_len(b), mode='constant', constant_values=(0, 0))
     for i in range(rows):
         for j in range(cols):
-            intersects = False
-            if intersects:
+            slice_of_padded_a = padded_a[i:i + len(b), j:j + len(b[0])]
+            if subset_of(b, slice_of_padded_a):
                 out[i][j] = 1
     return out
 
@@ -101,7 +135,7 @@ def main():
 
     # display the output
     plt.style.use('grayscale')
-    # plt.imshow(out)
+    plt.imshow(out)
     plt.show()
 
 
