@@ -18,7 +18,12 @@ def grayscale(rgb):
     out = [[0.0 for _ in range(len(rgb[0]))] for _ in range(len(rgb))]
     for i in range(len(rgb)):
         for j in range(len(rgb[0])):
-            out[i][j] = (int(rgb[i][j][0]) + int(rgb[i][j][1]) + int(rgb[i][j][2])) / 3
+            if rgb[0].ndim == 3:
+                out[i][j] = (int(rgb[i][j][0]) + int(rgb[i][j][1]) + int(rgb[i][j][2])) / 3
+            elif rgb[0].ndim == 2:
+                out[i][j] = int(rgb[i][j][0])
+            else:
+                out[i][j] = int(rgb[i][j])
     return out
 
 
@@ -36,7 +41,7 @@ def histogram(matrix):
     hist = [0 for _ in range(256)]
     d1 = np.array(matrix).flatten()
     for i in range(len(d1)):
-        index = math.floor((d1[i]))
+        index = math.floor(d1[i])
         if (index > -1) and (index < 256):
             hist[index] += 1
     return hist
@@ -67,8 +72,12 @@ def main():
     # convert the png into python matrix
     image1 = Image.open("img/grayscale_1.jpg")
     image2 = Image.open("img/grayscale_2.jpg")
+    image3 = Image.open("img/otsu_1.jpg")
+    image4 = Image.open("img/otsu_2.png")
     compute(image1)
     compute(image2)
+    compute(image3)
+    compute(image4)
 
 
 if __name__ == '__main__':

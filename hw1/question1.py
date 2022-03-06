@@ -158,12 +158,18 @@ def main():
     # referring from: https://www.researchgate.net/publication/267228362_A_new_Morphological_Approach_for_Noise_Removal_cum_Edge_Detection
     out = closing(opening(erosion(a, b), b), b)
     out2 = opening(erosion(out, b), b)
+    out3 = dilation(dilation(out2, b), b)
 
     # display the output
     plt.style.use('grayscale')
+    plt.imshow(out)
+    plt.show()
     plt.imshow(out2)
+    plt.show()
+    plt.imshow(out3)
     plt.show()
 
 
 if __name__ == '__main__':
     main()
+
