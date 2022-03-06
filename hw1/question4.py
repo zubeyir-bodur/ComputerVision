@@ -85,7 +85,9 @@ def main():
 
     # display the output
     plt.style.use('grayscale')
-    plt.imshow(np.concatenate((x_edges_s, x_edges_p), axis=1))
+    plt.imshow(x_edges_s)
+    plt.show()
+    plt.imshow(x_edges_p)
     plt.show()
 
 
