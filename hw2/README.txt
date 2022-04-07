@@ -1,31 +1,25 @@
 The libraries used are
-1 - OpenCV
-    To install OpenCV, you can type on Terminal:
-        pip install opencv-python
+1 - VLFeat
+    To install VLFeat, download the binary package from
+    https://www.vlfeat.org/download/vlfeat-0.9.21-bin.tar.gz
+    and extract it to any directory of your choice. Let this be directory VLFEATROOT.
 
-    After installing OpenCV, the import errors should be gone.
+    Then, In MATLAB Command, run the following:
+        run('VLFEATROOT\toolbox\vl_setup')
+            For example, if I downloaded extracted the zip file into Program Files,
+            the command would be
+                run('C:/Program Files/vlfeat-0.9.21/toolbox/vl_setup')
 
-   OpenCV is used to detect local features (key points and descriptors) for SIFT,
-   because VLFeat is not available on Python.
-2 - NumPy
-    To install NumPy, you can type on Terminal:
-        pip install numpy
+    Then, to make sure that VLFeat is setup, run the following:
+        vl_version verbose
 
-    NumPy is used for varying purposes.
+        It should output something like:
+            VLFeat version 0.9.17
+            Static config: X64, little_endian, GNU C 40201 LP64, POSIX_threads, SSE2, OpenMP
+            4 CPU(s): GenuineIntel MMX SSE SSE2 SSE3 SSE41 SSE42
+            OpenMP: max threads: 4 (library: 4)
+            Debug: yes
+            SIMD enabled: yes
 
-3 - Copy
-    To install copy, you can type on Terminal:
-        pip install copy
-
-    Copy is used for deep copying numpy arrays
-
-4 - SciPy
-    To install SciPy, you can type on Terminal:
-        pip install scipy
-
-    SciPy is used for computing the euclidian distance between two vectors
-
-5 - Pillow
-    To install pillow, you can type in Terminal:
-        pip install Pillow
-
+2 - Computer Vision Toolbox
+    This can be easily downloaded using Add-Ons Explorer of MATLAB.

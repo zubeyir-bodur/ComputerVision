@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 
 def main(path_name, descriptor_choice):
     """
+    DEPRECATED: REFER TO MAIN.M
     Main entry point for the program. Warning, the program assumes image stitching in grayscale 2D images!
     :param path_name: Path to a text file that lists paths for the images to be stitched together
     :param descriptor_choice: One of two options, either SIFT or RPBD (Random pixel based descriptor)
@@ -63,7 +64,7 @@ def main(path_name, descriptor_choice):
             # Run feature selection at start
             # Let the threshold be 4.5 for the feature
             # size due to computation limits
-            if feature.size >= 4.5:
+            if feature.size >= 0.5:
                 key_points[i].append(feature)
         # Show a key_pointed image
         temp_img = copy.deepcopy(images[0])
@@ -99,26 +100,29 @@ def main(path_name, descriptor_choice):
     for i in range(len(images) - 1):
         # check the pair images[i], images[i+1] for faster computations,
         # where i is ranging from 0 to n-1
-        matches = []
-        # distances = []
-        T = 150.0
+        matches = {}
+        distances = []
+        T = 100.0
         M = 0
         for j in range(len(key_points[i])):
             for k in range(len(key_points[i+1])):
                 dist = distance.euclidean(descriptors[i][j], descriptors[i+1][k])
-                # distances.append(dist)
+                distances.append(dist)
                 #   3.2 If the distance is above a threshold T, those features match. Mark them as matching features
                 #   for these pairs.
                 #       3.2.1 Find a good T value, found using Otsu's thresholding idea.
                 #               Use T = 120.0, reasons explained in the report
                 if dist <= T:
                     #   3.3 Store the coordinates of pixels whose feature vectors in a pair of images match
-                    matches.append((key_points[i][j].pt, key_points[i+1][k].pt))
+                    # meaning at image i, this point matches to that point in image i+1
+                    matches[key_points[i][j].pt] = key_points[i+1][k].pt
+
+
             # 3.2.1 TODO Or for a given T, consider a minimum match count to decide if an image pair
             #           overlaps or not. If len(matches) < M, then stop computing this pair.
             #           And move on to the next one.
 
-        """
+
         # define window size, output and axes
         fig, ax = plt.subplots(figsize=[8, 6])
         
@@ -126,7 +130,7 @@ def main(path_name, descriptor_choice):
         ax.set_title("Histogram of Euclidean Distances Between Feature Vectors")
 
         # set x-axis name
-        bins = 750
+        bins = 50
         ax.set_xlabel(f"Intervals, whose width is apx. {700/bins}")
 
         # set y-axis name
@@ -146,7 +150,7 @@ def main(path_name, descriptor_choice):
                 patch.set_facecolor("#FF0000")
                 patch.set_label("something")
         plt.show()
-        """
+
 
     # 4. Image registration step, using RANSAC
     #   4.1 Parameter tuning in RANSAC
